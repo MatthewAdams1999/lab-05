@@ -6,17 +6,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:padding="6dp">
+    android:padding="6dp" >
 
     <Button
         android:id="@+id/buttonAddCity"
-        android:text="Add City"
+        android:text="@string/add_city"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="10dp"/>
+        android:layout_marginStart="10dp" />
+
+    <TextView
+        android:id="@+id/tooltipDelCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/long_press_to_remove_city"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/buttonAddCity"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingTop="10dp" />
 
     <ListView
         android:id="@+id/listviewCities"

@@ -18,7 +18,6 @@ public class City implements Serializable {
     public String getProvince() {
         return province;
     }
-
     public void setProvince(String province) {
         this.province = province;
     }

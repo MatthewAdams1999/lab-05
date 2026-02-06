@@ -51,38 +51,43 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
         cityArrayAdapter = new CityArrayAdapter(this, cityArrayList);
         cityListView.setAdapter(cityArrayAdapter);
 
-        // addDummyData();
-
         // set listeners
         addCityButton.setOnClickListener(view -> {
             CityDialogFragment cityDialogFragment = new CityDialogFragment();
-            cityDialogFragment.show(getSupportFragmentManager(),"Add City");
+            cityDialogFragment.show(getSupportFragmentManager(), "Add City");
         });
 
         cityListView.setOnItemClickListener((adapterView, view, i, l) -> {
             City city = cityArrayAdapter.getItem(i);
             CityDialogFragment cityDialogFragment = CityDialogFragment.newInstance(city);
-            cityDialogFragment.show(getSupportFragmentManager(),"City Details");
+            cityDialogFragment.show(getSupportFragmentManager(), "City Details");
         });
 
         db = FirebaseFirestore.getInstance();
         citiesRef = db.collection("cities");
 
         citiesRef.addSnapshotListener((value, error) -> {
-           if (error != null) {
-               Log.e("Firestore", error.toString());
-           }
+            if (error != null) {
+                Log.e("Firestore", error.toString());
+            }
 
-           if (value != null && !value.isEmpty()) {
-               cityArrayList.clear();
-               for (QueryDocumentSnapshot snapshot : value) {
-                   String name = snapshot.getString("name");
-                   String province = snapshot.getString("province");
+            if (value != null && !value.isEmpty()) {
+                cityArrayList.clear();
+                for (QueryDocumentSnapshot snapshot : value) {
+                    String name = snapshot.getString("name");
+                    String province = snapshot.getString("province");
 
-                   cityArrayList.add(new City(name, province));
-               }
-               cityArrayAdapter.notifyDataSetChanged();
-           }
+                    cityArrayList.add(new City(name, province));
+                }
+                cityArrayAdapter.notifyDataSetChanged();
+            }
+        });
+
+        cityListView.setOnItemLongClickListener((adapterView, view, position, id) -> {
+            City city = cityArrayAdapter.getItem(position);
+            delCity(city);
+            cityArrayAdapter.notifyDataSetChanged();
+            return true;
         });
 
     }
@@ -97,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
     }
 
     @Override
-    public void addCity(City city){
+    public void addCity(City city) {
         cityArrayList.add(city);
         cityArrayAdapter.notifyDataSetChanged();
 
@@ -112,11 +117,12 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
 
     }
 
-    public void addDummyData(){
-        City m1 = new City("Edmonton", "AB");
-        City m2 = new City("Vancouver", "BC");
-        cityArrayList.add(m1);
-        cityArrayList.add(m2);
-        cityArrayAdapter.notifyDataSetChanged();
+    public void delCity(City city) {
+        citiesRef.document(city.getName())
+                .delete()
+                .addOnSuccessListener(unused ->
+                        Log.d("Firestone", "City deleted"))
+                .addOnFailureListener(e ->
+                        Log.e("Firestone", "Delete failed", e));
     }
 }
